@@ -1,0 +1,67 @@
+2011-04-15 Yves Le Provost	<yves.le-provost@hsc.fr>
+	* Released Version 0.5
+	* Add option to change method
+	* Bug fixed in help
+	* Bug fix in file size
+	* Add proxy option
+	* Change -H option to accept multiple Headers
+	* Modify -f option to separate file 1 and file 2
+	* modify behavior with the HEAD method in agressive mode
+	* Add encoding option (-E [1|2]) 
+	* add man page
+	* add module to detect sql injection in header
+
+2010-12-22	Yves Le Provost	<yves.le-provost@hsc.fr>
+	* Released Version 0.4
+	* Add header fuzz
+	* Modify error messages
+	* add debug option
+	* Modify return parse_post()
+	* Add redirect filtering (-R option)
+
+2010-12-22	Yves Le Provost	<yves.le-provost@hsc.fr>
+	* Released Version 0.3.2
+	* Bug fixed with too much beer drinked
+
+2010-11-21	Yves Le Provost	<yves.le-provost@hsc.fr>
+	* Released Version 0.3.1
+	* Add Basic authentication fuzz
+	* Bug fixed with windows file format
+
+2010-11-21	Yves Le Provost	<yves.le-provost@hsc.fr>
+	* Released Version 0.3
+	* Add client certificate support in HTTPS mode
+
+2010-11-20	Yves Le Provost	<yves.le-provost@hsc.fr>
+	* Released Version 0.2.4
+	* Bug fixed in HTTPS multithead
+
+2010-11-15	Yves Le Provost	<yves.le-provost@hsc.fr>
+	* Released Version 0.2.3
+	* Bug fixed in HTTPS + agressive mode
+	* Add "quiet" option
+
+2010-09-24	Yves Le Provost	<yves.le-provost@hsc.fr>
+	* Released Version 0.2.2
+	* Full HTTP 1.1 support
+
+2010-09-22	Yves Le Provost	<yves.le-provost@hsc.fr>
+	* Released Version 0.2.1
+	* Fix HTTP 1.1 support (not hunked Transfer Coding supported yet)
+	* Hide by response size
+
+2010-09-20	Yves Le Provost	<yves.le-provost@hsc.fr>
+	* Released Version 0.2
+	* Add "Agressive Mode" (HTTP 1.1 only with content-length header, not
+	chunked encoding transfert yet)
+	* Add response size
+	* Fix 2 off-by-one
+	* Add sleep option between requests
+
+2010-08-28	Yves Le Provost	<yves.le-provost@hsc.fr>
+	* Released Version 0.1
+	* only HTTP 1.0 
+	* HTTPS support
+	* GET and POST methods
+	* Headers
+	* multi-thread

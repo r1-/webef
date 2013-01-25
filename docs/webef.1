@@ -1,0 +1,208 @@
+.\" manual page for webef
+.\" 
+.\" Licensed under GPLv2
+.\"
+.\" Permission to use, copy, modify, and distribute this software for any
+.\" purpose with or without fee is hereby granted, provided that the above
+.\" copyright notice and this permission notice appear in all copies.
+.\"
+.\" THIS SOFTWARE IS PROVIDED "AS IS" AND THE AUTHORS DISCLAIM ALL WARRANTIES
+.\" WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+.\" MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+.\" ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+.\" WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+.\" ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+.\" OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+.\"
+.TH webef 1
+.SH NAME
+webef \- Web bruteforcer
+
+.SH SYNOPSIS
+.B	webef [\fIOPTIONS\fR]... -f \fIword_file\fR [-f \fIword_file\fR] url
+
+.SH DESCRIPTION
+.LP
+\fIwebef\fR is a web bruteforcer. It is designed to find directories or files in
+a web server using a wordlist brute force.
+.LP
+It supports multithreading, post data bruteforcing, headers adding, HTTP 1.1
+requests, HTTPS, client certificate file, proxy, url and querystring encoding.
+It is possible to hide results, depending on their HTTP response code or 
+response size.
+.LP
+Two wordlist files are allowed.
+.LP
+webef needs to have at least one dictionnary file and one url target.
+.LP
+A module is available in order to detect SQL injections in headers, based on
+delay response.
+.TP
+.B
+-f \fIWORD_FILE\fR 
+Reads words from the specified file. Each word will replace the keyword 'FUZZ' in the url 
+or any other specified option. This option can be used twice.
+
+.TP
+.B
+\fIURL\fR 
+Specifies the target url. Url must have the following form : 
+[http|https]://host[:port][/directory][/files[?parameter=value]]
+
+.LP
+At less one \fIFUZZ\fR keyword is required. It can be used with url or any one of the following OPTIONS.
+
+.LP
+It is  possible to use a second dictionnary file with the second keyword FUZ2Z. In this case
+the second file is designed to replace the FUZ2Z word. FUZ2Z needs to be used in the same part
+as FUZZ (As an example, the two keywords need to be in url, or both need to be in POST data, etc.).
+
+.SH OPTIONS
+
+.SS FUZZING OPTIONS
+.TP
+.B -H \fIHEADER\fR 
+Specifies a header to use in HTTP request. This option can be used several times to declare additional headers. It needs to be in HTTP form : like "Header: value". FUZZ and FUZ2Z keywords are allowed in
+this part in order to fuzz the HTTP headers.
+.TP
+.B -P \fIPOST_DATA\fR 
+uses the HTTP POST method with specific data. Data needs to be in the HTTP form : "Data=value&Data2=value2". It is possible to fuzz POST data with the help of FUZZ and FUZ2Z keywords.
+.TP
+.B -B \fIAUTHENTICATION\fR
+specifies a basic authentication. Authentication data needs to have the following form : "user=USER&pass=PASS". (No need to encode in base 64). It is possible to use FUZZ and FUZ2Z in order to bruteforce
+authentication.
+.TP
+.B -E \fI[1|2]\fR 
+uses encoding for FUZZ and FUZ2Z. The valid values are 1, for url encode, or 2 for query strings encode.
+.TP
+.B -A 
+Uses the "agressive" mode. Agressive mode uses the HTTP 1.1 protocol with the keep-alive connection. This enhances performance but the web server may not "appreciate" the overload, especially when using openssl for HTTPS connection. Agressive mode can be used with the HEAD HTTP method in order to improve performance.
+
+.SS STANDARD OPTIONS
+.TP
+.B -t \fITHREAD_NUMBER\fR
+Specifies the number of threads. Default value is fixed at 10.
+.TP
+.B -m \fIMETHOD\fR 
+HTTP method to use instead of POST or GET.
+.TP
+.B -p \fIPROXY:PORT\fR
+Specifies a proxy with IP adress or host and port.
+.TP
+.B -s \fINUM\fR 
+Number of seconds between requests in order to limit the traffic 
+.TP
+.B -d 
+Displays debug messages
+.TP
+.B -v 
+Displays webef version number
+.TP
+.B -h 
+Displays online help.
+
+.SS OPENSSL OPTIONS
+Openssl is automaticaly activated when the \fIhttps\fR protocol is specified.
+.TP
+.B -c \fICERTIFICATE\fR
+Client certificate file in PEM format to use with https.
+.TP
+.B -k \fIKEY_FILE\fR
+Private key file to use with client certificate.
+
+.SS DISPLAY OPTIONS
+.TP
+.B -e \fINUM\fR
+Hides the response with the specified error number. Multiple values (comma separated) can be specified.
+.TP
+.B -n \fI[NUM|SIZE1-SIZE2]\fR
+Hides the response for pages with the specified size. A size range can be specified in order to hide responses with the size within boundries.
+.TP
+.B -q 
+Quiet mode. No banner is displayed.
+.TP
+.B -R \fIREDIRECT\fR
+Hides responses if the string specified in REDIRECT is present in the redirect (location) header. 
+
+.SS MODULE OPTIONS
+.TP
+.B -i 
+Detect the SQL injections in the Headers that are commonly concerned (Cookies, User-agent, etc.).
+
+.SH EXAMPLES
+.TP
+.B simplest example :
+webef -f wordlist http://host/FUZZ
+.TP
+.B with another TCP port : 
+webef -f wordlist http://host:8080/FUZZ
+.TP
+.B with https :
+webef -f wordlist https://host/FUZZ
+.TP
+.B with https and client certificate with private key :
+webef -f wordlist -c SSL_cert.crt -k SSL_key.key https://host/FUZZ
+.TP
+.B with another wordlist file (extension fuzzing as an example) :
+webef -f wordlist1,wordlist2 http://host/FUZZ.FUZ2Z
+.TP
+.B Change the number of thread (10 by default)
+webef -f wordlist -t 5 http://host/FUZZ
+.TP
+.B Add a waiting time between two requests (2 seconds) :
+webef -f wordlist -s 2 http://host/FUZZ
+.TP 
+.B Agressive mode uses HTTP 1.1 and persistent connections. It is more efficient with HTTPS (less handshake phases) and faster :
+webef -f wordlist -A http://host/FUZZ
+.TP
+.B Agressive mode can be used with the HEAD method to improve performance : 
+webef -f wordlist -m HEAD -A http://host/FUZZ
+.TP
+.B Post data bruteforcing :
+webef -f wordlist -P "data=FUZZ&content=1&id=FUZ2Z" http://host/url
+.TP 
+.B Use proxy :
+webef -f wordlist -p "192.168.1.1:3128" http://host/FUZZ
+.TP
+.B Use url encoding for FUZZ words :
+webef -f wordlist -E 1 http://host/FUZZ
+.TP
+.B Add headers :
+webef -f wordlist -H "User-agent=blah" http://host/FUZZ
+.TP 
+.B Hide response following HTTP return code :
+webef -f wordlist -e 404 http://host/FUZZ
+.TP
+.B Hide response following HTTP redirect :
+webef -f wordlist -R "http://host/redirect.html" http://host/FUZZ
+.TP
+.B Basic authentifcation bruteforcing :
+webef -f user.txt -f pass.txt -B "user=FUZZ&pass=FUZ2Z" -e 401 http://host/url
+
+.SH AUTHORS
+This tool was created by Yves Le Provost.
+
+.SH BUGS / ENHANCEMENT
+If any bug or misbehaviour is observed, or to suggest enhancements, please email
+me at <\fIyves.leprovost@hsc.fr\fR>
+
+.SH VERSION
+This man page describes version 0.5 of webef.
+
+.SH COPYRIGHT
+webef is release under GPLv2 license.
+.LP
+OpenSSL is released under BSD licence
+(http://www.openssl.org/source/license.html) 
+.LP
+Redistribution and use in source and binary forms, with or without
+modification, are allowed according to GPLv2 conditions.
+
+.SH DISCLAIMER
+THE AUTHORS OF THIS SOFTWARE DISCLAIM ALL WARRANTIES WITH REGARD TO
+THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+AND FITNESS, IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY
+SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN
+AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING
+OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
