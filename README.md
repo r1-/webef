@@ -26,7 +26,9 @@ install
 
 Get the tarball and extract it:
   tar xvfz webef.tgz
+  
 	cd webef/
+	
 	make
 
 For compiling webef, gcc is recommended.
