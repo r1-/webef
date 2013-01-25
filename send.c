@@ -90,11 +90,11 @@ int parse_response(
 			 ))
 					display=false;
 
-		printf("*%4ld ", opt->count);
 		opt->count++;
 
 		if(display)
 		{
+			printf("*%4ld ", opt->count);
 			printf("[%s]", resp->code);
 			if(size == -1)
 			{
@@ -112,7 +112,10 @@ int parse_response(
 			printf("\n");
 		}
 		else
-			printf("\r");
+		{
+			fprintf(stderr,"*%4ld ", opt->count);
+			fprintf(stderr,"\r");
+		}
 	pthread_mutex_unlock(&mutex_print);
 
 	return (error);
