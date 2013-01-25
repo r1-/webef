@@ -25,7 +25,8 @@ install
 -------
 
 Get the tarball and extract it:
-  tar xvfz webef.tgz
+
+	tar xvfz webef.tgz
   
 	cd webef/
 	
@@ -98,8 +99,3 @@ webef -f wordlist/injections.txt -i http://host/page.php
 
 Debug : -d option
 
-contact
--------
-
-For questions, bug reports, ideas, contributions etc. please contact
-yves.leprovost@gmail.com
