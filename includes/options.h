@@ -1,7 +1,7 @@
 /*
 ** Copyright (C) 2010 Yves LE PROVOST
 ** $Id$
-** 
+**
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
 ** the Free Software Foundation; either version 2 of the License, or
@@ -15,7 +15,7 @@
 ** You should have received a copy of the GNU General Public License
 ** along with This program; if not, write to the Free Software
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-** 
+**
 ** Additional permission under GNU GPL version 3 section 7
 **
 ** If you modify this program, or any covered work, by linking or
@@ -25,7 +25,7 @@
 ** grants you additional permission to convey the resulting work.
 ** Corresponding Source for a non-source form of such a combination
 ** shall include the source code for the parts of OpenSSL used as well
-** as that of the covered work.  
+** as that of the covered work.
 */
 
 #ifndef H_OPTIONS
@@ -42,86 +42,86 @@
 #endif
 
 typedef struct {
-		char *mid;
-		char *end;
+          char *mid;
+          char *end;
 } s_headers;
 
-typedef struct s_cookies{
-	char *cookie;
-	struct s_cookies *next_cook;
+typedef struct s_cookies {
+          char *cookie;
+          struct s_cookies *next_cook;
 } s_cookies;
 
 typedef s_cookies *t_cookies;
 
 typedef struct s_options {
-	unsigned int type_fuzz; /* 1=file 2=range 3 ... */
-	unsigned int thread;
+          unsigned int type_fuzz; /* 1=file 2=range 3 ... */
+          unsigned int thread;
 
-	struct {
-		char *host;
-		char *url_pre;
-		char *url_mid;
-		char *url_end;
-		bool ssl;
-		unsigned short port;
-		char ch_port[6];
-	} url;
+          struct {
+                    char *host;
+                    char *url_pre;
+                    char *url_mid;
+                    char *url_end;
+                    bool ssl;
+                    unsigned short port;
+                    char ch_port[6];
+          } url;
 
-	struct hostent *dns_host;
-	
-	char *file1;
-	unsigned int line_file1;
-	unsigned int line_file2;
-	char *file2;
-	char *range;
-	char *range2;
-	char *method;
-	
-	bool urlfuzz;
-	bool headfuzz;
-	bool quiet;
-	bool onefuzz;
-	bool twofuzz;
-	bool inj;
-	bool debug;
-	unsigned int url_length;
-	bool agressive;
-	unsigned int wait;
-	short encod;
-	char *cert;
-	char *key;
-	short ssl_version;
-	char *location;
-	SSL_CTX *ctx;
+          struct hostent *dns_host;
 
-	t_cookies cookies;	
+          char *file1;
+          unsigned int line_file1;
+          unsigned int line_file2;
+          char *file2;
+          char *range;
+          char *range2;
+          char *method;
 
-	struct { 
-		char *post_pre;
-		char *post_mid;
-		char *post_end;
-	} post;
-	
-	struct {
-		char *user;
-		char *pass;
-		int type; //1=basic
-	} auth;
+          bool urlfuzz;
+          bool headfuzz;
+          bool quiet;
+          bool onefuzz;
+          bool twofuzz;
+          bool inj;
+          bool debug;
+          unsigned int url_length;
+          bool agressive;
+          unsigned int wait;
+          short encod;
+          char *cert;
+          char *key;
+          short ssl_version;
+          char *location;
+          SSL_CTX *ctx;
 
-	s_headers head;
+          t_cookies cookies;
 
-	struct {
-		char *ip;
-		unsigned short port;
-	} proxy;
+          struct {
+                    char *post_pre;
+                    char *post_mid;
+                    char *post_end;
+          } post;
 
-	char *headers;
-	
-	char *hide;
-	int size_down;
-	int size_up;
-	unsigned long count;
-	unsigned int error;
+          struct {
+                    char *user;
+                    char *pass;
+                    int type; //1=basic
+          } auth;
+
+          s_headers head;
+
+          struct {
+                    char *ip;
+                    unsigned short port;
+          } proxy;
+
+          char *headers;
+
+          char *hide;
+          int size_down;
+          int size_up;
+          unsigned long count;
+          unsigned int error;
 } t_options;
 
 void usage(char* );
@@ -138,4 +138,4 @@ bool parse_auth(char *, t_options *);
 bool fuzz_headers(t_options *);
 void add_headers(char *, t_options *);
 void add_file(char*, t_options *, int);
-#endif 
+#endif

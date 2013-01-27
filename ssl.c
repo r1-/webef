@@ -1,7 +1,7 @@
 /*
 ** Copyright (C) 2010 Yves LE PROVOST
 ** $Id$
-** 
+**
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
 ** the Free Software Foundation; either version 2 of the License, or
@@ -15,7 +15,7 @@
 ** You should have received a copy of the GNU General Public License
 ** along with This program; if not, write to the Free Software
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-** 
+**
 ** Additional permission under GNU GPL version 3 section 7
 **
 ** If you modify this program, or any covered work, by linking or
@@ -25,7 +25,7 @@
 ** grants you additional permission to convey the resulting work.
 ** Corresponding Source for a non-source form of such a combination
 ** shall include the source code for the parts of OpenSSL used as well
-** as that of the covered work.  
+** as that of the covered work.
 */
 
 #include <openssl/ssl.h>
@@ -39,44 +39,43 @@
 
 void initssl()
 {
-	CRYPTO_malloc_init();
-	SSL_library_init();
-	SSL_load_error_strings();
+          CRYPTO_malloc_init();
+          SSL_library_init();
+          SSL_load_error_strings();
 }
 
 SSL *opensocks(int sock, t_options *data)
 {
-	int ret_sslconnect=0;
-	SSL *ssl;
-	X509            *server_cert;
+          int ret_sslconnect=0;
+          SSL *ssl;
+          X509            *server_cert;
 
-	ssl=SSL_new(data->ctx);
-	EXIT_IFNULL(ssl, "SSL error ssl context");
+          ssl=SSL_new(data->ctx);
+          EXIT_IFNULL(ssl, "SSL error ssl context");
 
-	if (!SSL_set_fd(ssl,sock))
-		EXIT_IFNULL(ssl, "SSL error set sock");
+          if (!SSL_set_fd(ssl,sock))
+                    EXIT_IFNULL(ssl, "SSL error set sock");
 
-	ret_sslconnect = SSL_connect(ssl);
-	EXIT_SSL(ret_sslconnect, "SSL handshake error");
+          ret_sslconnect = SSL_connect(ssl);
+          EXIT_SSL(ret_sslconnect, "SSL handshake error");
 
-	server_cert = SSL_get_peer_certificate(ssl);
-	X509_free(server_cert);
+          server_cert = SSL_get_peer_certificate(ssl);
+          X509_free(server_cert);
 
-	return(ssl);
+          return(ssl);
 }
 
 void closesocks(SSL **ssl, int sock)
 {
-	int ret;
-   SSL_set_shutdown(*ssl, SSL_SENT_SHUTDOWN|SSL_RECEIVED_SHUTDOWN);
-   ret = SSL_shutdown(*ssl);
-	if(ret == 0)
-	{
-		ret = SSL_shutdown(*ssl);
-		printf("\n %i \n",SSL_get_error(*ssl, ret));
-	}
-	EXIT_SSL(ret, "SSL shutdown error");
-	SSL_free(*ssl);
-	close(sock);
+          int ret;
+          SSL_set_shutdown(*ssl, SSL_SENT_SHUTDOWN|SSL_RECEIVED_SHUTDOWN);
+          ret = SSL_shutdown(*ssl);
+          if(ret == 0) {
+                    ret = SSL_shutdown(*ssl);
+                    printf("\n %i \n",SSL_get_error(*ssl, ret));
+          }
+          EXIT_SSL(ret, "SSL shutdown error");
+          SSL_free(*ssl);
+          close(sock);
 }
 

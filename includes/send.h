@@ -1,7 +1,7 @@
 /*
 ** Copyright (C) 2010 Yves LE PROVOST
 ** $Id$
-** 
+**
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
 ** the Free Software Foundation; either version 2 of the License, or
@@ -15,7 +15,7 @@
 ** You should have received a copy of the GNU General Public License
 ** along with This program; if not, write to the Free Software
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-** 
+**
 ** Additional permission under GNU GPL version 3 section 7
 **
 ** If you modify this program, or any covered work, by linking or
@@ -25,7 +25,7 @@
 ** grants you additional permission to convey the resulting work.
 ** Corresponding Source for a non-source form of such a combination
 ** shall include the source code for the parts of OpenSSL used as well
-** as that of the covered work.  
+** as that of the covered work.
 */
 
 #ifndef H_SEND
@@ -36,7 +36,7 @@
 #include "resp.h"
 #include "ssl.h"
 
-#define MAX_SIZE_READ 4096 
+#define MAX_SIZE_READ 4096
 #define MAX_SIZE_URL	1024
 #define DEBUG 0
 
@@ -44,4 +44,4 @@ int parse_response(char *, int, unsigned int, t_response *, t_options *, char *,
 int opensock(t_datathread *);
 int sendfuzz(t_datathread *, char **, char **, int, SSL *);
 int iosocket(int, char *, char **, t_options, SSL *, unsigned int*);
-#endif 
+#endif
