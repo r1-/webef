@@ -124,7 +124,7 @@ void get_options(int argc, char **argv, t_options *opt)
 	{
 		switch ( c )
 		{
-			case 'f' : if(opt->type_fuzz == 1)
+			case 'f' : if(opt->type_fuzz == TYPE_FUZZ_FILE)
 								add_file(optarg, opt, 2);
 						  else
 						  {						
@@ -132,7 +132,7 @@ void get_options(int argc, char **argv, t_options *opt)
 								add_file(optarg, opt, 1);
 						  }
 						  break;
-			case 'r' : opt->type_fuzz=2; break;
+			case 'r' : opt->type_fuzz=TYPE_FUZZ_RANGE; break;
 			case 't' : opt->thread = atoi(optarg); break;
 			case 's' : opt->wait = (unsigned int) atoi(optarg); break;
 			case 'n' : parse_range_size(optarg, opt); break;
@@ -241,16 +241,20 @@ void get_options(int argc, char **argv, t_options *opt)
 	}			
 
 	if(opt->proxy.ip != NULL)
-		opt->dns_host = gethostbyname(opt->proxy.ip);
+		//opt->dns_host = gethostbyname(opt->proxy.ip);
+		opt->dns_host = opt->proxy.ip;
 	else
-		opt->dns_host = gethostbyname(opt->url.host);
+		//opt->dns_host = gethostbyname(opt->url.host);
+		opt->dns_host = opt->url.host;
 
 	if(opt->dns_host==NULL && h_errno == TRY_AGAIN)
 	{
 		if(opt->proxy.ip != NULL)
-			opt->dns_host = gethostbyname(opt->proxy.ip);
+			//opt->dns_host = gethostbyname(opt->proxy.ip);
+			opt->dns_host = opt->proxy.ip;
 		else
-			opt->dns_host = gethostbyname(opt->url.host);
+			//opt->dns_host = gethostbyname(opt->url.host);
+			opt->dns_host = opt->url.host;
 
 		EXIT_IFNULL(opt->dns_host, "DNS error");
 	}
@@ -297,6 +301,7 @@ void parse_proxy(char *prox, t_options *opt)
 		*p=0;
 		opt->proxy.ip=prox;
 		opt->proxy.port=atoi(p+1);
+		snprintf(opt->proxy.ch_port, 5, "%hu", opt->proxy.port);
 	}
 	else
 	{

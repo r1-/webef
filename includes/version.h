@@ -28,5 +28,5 @@
 ** as that of the covered work.  
 */
 
-#define VERSION "0.5"
+#define VERSION "0.5.1"
 #define URL "www.hsc.fr/ressources/outils/webef"

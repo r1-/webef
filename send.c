@@ -39,6 +39,7 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <openssl/err.h>
+#include <arpa/inet.h>
 
 #include "send.h"
 #include "options.h"
@@ -123,24 +124,84 @@ int parse_response(
 
 int opensock(t_datathread *data)
 {
-	struct hostent *hostent;
-	int sock_cli;
+	/*struct hostent *hostent;
+	int sock_cli = -1;
 	struct sockaddr_in sin;
 	in_addr_t addr;
 	hostent=data->opt.dns_host;	
-	memcpy(&addr, *hostent->h_addr_list, sizeof(addr));
+	memcpy(&addr, *hostent->h_addr_list, sizeof(addr));*/
+	int sock_cli = -1;
+	struct addrinfo hostinfo, *res, *ll;
+	int ret = -1;
+	char *port;
+	void *in_addr = NULL;
 
-	RETURN_ERR(sock_cli=socket(PF_INET, SOCK_STREAM, 0), "socket error");
+	res = ll = NULL;
+	port = (data->opt.proxy.ip!=NULL) ? data->opt.proxy.ch_port : data->opt.url.ch_port;
 
-	sin.sin_addr.s_addr = addr;
-	sin.sin_family = AF_INET;
+	memset(&hostinfo, 0, sizeof(struct addrinfo));
+	hostinfo.ai_family    = AF_UNSPEC;
+	hostinfo.ai_socktype  = SOCK_STREAM;
+	hostinfo.ai_flags     = 0;
+	hostinfo.ai_protocol  = IPPROTO_TCP;
 
-	if(data->opt.proxy.ip != NULL)
-		sin.sin_port = htons(data->opt.proxy.port);
-	else	
-		sin.sin_port = htons(data->opt.url.port);
+	ret = getaddrinfo(data->opt.dns_host, port, &hostinfo, &res);
+	if (ret < 0) 
+	{
+		fprintf(stderr, "getaddrinfo failed, reason: %s\n", gai_strerror(ret));
+		freeaddrinfo(res);
+		exit(ret);
+	}
 
-	EXIT_IFNEG(connect(sock_cli, &sin, sizeof(sin)), "connect error");
+	for (ll=res; ll; ll=ll->ai_next) 
+	{  
+		switch (ll->ai_family) 
+		{
+			case AF_INET: 
+			{
+				struct sockaddr_in *in4 = ((struct sockaddr_in*) ll->ai_addr);
+				in_addr = &in4->sin_addr;
+				break;
+ 	      }
+ 			
+ 	      case AF_INET6: 
+			{
+				struct sockaddr_in6 *in6 = ((struct sockaddr_in6*) ll->ai_addr);
+				in_addr = &in6->sin6_addr;
+				break;
+ 	      }
+ 			
+ 	      default :
+				continue;
+     }
+
+
+		//RETURN_ERR(sock_cli=socket(PF_INET, SOCK_STREAM, 0), "socket error");
+		sock_cli = socket(ll->ai_family, ll->ai_socktype, ll->ai_protocol);
+
+		if (sock_cli == -1)
+			continue;
+
+		if ( inet_ntop(ll->ai_family, in_addr, data->opt.ip_host, INET6_ADDRSTRLEN)== NULL) 
+			fprintf(stderr, "failed to convert IP structure to string\n");
+	
+		//sin.sin_addr.s_addr = addr;
+		//sin.sin_family = AF_INET;
+		if (connect(sock_cli, ll->ai_addr, ll->ai_addrlen) == 0)
+			break;
+
+		//if(data->opt.proxy.ip != NULL)
+		//	sin.sin_port = htons(data->opt.proxy.port);
+		//else	
+		//	sin.sin_port = htons(data->opt.url.port);
+		fprintf(stderr, "connect error\n");
+		close(sock_cli);
+		sock_cli=-1;
+	}
+	freeaddrinfo(res);
+
+	//EXIT_IFNEG(connect(sock_cli, &sin, sizeof(sin)), "connect error");
+	EXIT_IFNEG(sock_cli, "socket error");
 
 	return sock_cli;
 }
@@ -187,7 +248,7 @@ int sendfuzz(
 	}
 	else 
 	{
-		if(data->opt.auth.type==1 && (data->opt.auth.user==NULL || data->opt.auth.pass==NULL))
+		if(data->opt.auth.type==TYPE_FUZZ_FILE && (data->opt.auth.user==NULL || data->opt.auth.pass==NULL))
 		{
 			if(word2==NULL)
 				prep=basic_auth(&(url), data, *word1, NULL);
@@ -264,9 +325,9 @@ int iosocket(
 	SSL *ssl, 
 	unsigned int *content_length)
 {
-	char tmp_buf[MAX_SIZE_READ];
-	memset(tmp_buf, 0, MAX_SIZE_READ);
-	unsigned int effective_length, size_read;
+	char tmp_buf[MAX_SIZE_READ] = {0, };
+	size_t effective_length = 0;
+	unsigned int size_read;
 	int count=0;
 	char *recv=NULL;	
 	bool chk=false, chunk;

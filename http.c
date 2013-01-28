@@ -179,7 +179,6 @@ bool get_location(char *search, char *buf, int size)
 	char *loc=NULL;
 	unsigned length;
 	unsigned int i=10;
-	bool resp;
 	
 	if(strlen(buf) < 10)
 		return false;	
@@ -193,16 +192,14 @@ bool get_location(char *search, char *buf, int size)
 	p=strstr(tmp+i, "\r\n");
 	length = (unsigned int) ((unsigned long) p - ((unsigned long) (tmp+i)) +1); 
 
-	loc= calloc(length+1,1);
+	//loc= calloc(length+1,1);
+	loc= alloca(length+1);
 	strncpy(loc, tmp+i, length);
 
 	if(strstr(loc, search)!=NULL)
-		resp=true;
+		return true;
 	else
-		resp=false;
-
-	free(loc);
-	return resp;
+		return false;
 }
 
 bool end_chunck(char *buf, int size)
@@ -245,12 +242,10 @@ int post(
 	char *word1, 
 	char *word2)
 {
-	char url[MAX_SIZE_URL];
+	char url[MAX_SIZE_URL] = { 0, };
 	int size;
-	char length[4];
+	char length[4] = { 0, };
 	char *auth=NULL;
-
-	memset(url, 0, MAX_SIZE_URL);
 
 	if(data->opt.method != NULL && strlen(data->opt.method)< (MAX_SIZE_URL-2) )
 	{
@@ -407,9 +402,9 @@ int get(
 	char **word1, 
 	char **word2)
 {
-	char url[MAX_SIZE_URL];
-	memset(url, 0, MAX_SIZE_URL);
+	char url[MAX_SIZE_URL] = { 0, };
 	char *auth=NULL;
+	size_t ressource_length = 0; // added by hugsy ??
 
 	if(data->opt.method != NULL && strlen(data->opt.method)< (MAX_SIZE_URL-2))
 	{
@@ -516,11 +511,12 @@ int get(
 
 	strncat(url,"\r\n", 2);
 
-	*ressource = calloc(strlen(url)+1,1);
-	memset(*ressource, 0, sizeof(*ressource));
+	ressource_length = strlen(url + 1);
+	*ressource = calloc(ressource_length, 1);
+	memset(*ressource, 0, ressource_length);
 	EXIT_IFNULL(*ressource, "Memory Error");
 
-	strncpy(*ressource, url, strlen(url));
+	strncpy(*ressource, url, ressource_length -1);
 
 	return(1);
 }
@@ -531,7 +527,7 @@ char *basic_authent(char *user, char *pass)
 	char *encod=NULL;
 	unsigned int input_size=0;
 
-	plain=calloc(strlen(user)+strlen(pass)+2,1);
+	plain=alloca(strlen(user)+strlen(pass)+2);
 	strcpy(plain, user);
 	strcat(plain, ":");
 	strcat(plain, pass);
@@ -543,8 +539,7 @@ char *basic_authent(char *user, char *pass)
 
 bool proxy_connect(char **ressource, t_datathread *data)
 {
-	char url[MAX_SIZE_URL];
-	memset(url, 0, MAX_SIZE_URL);
+	char url[MAX_SIZE_URL] = {0, };
 	
 	strcpy(url, "CONNECT ");
 	if((strlen(data->opt.url.host) * 2+strlen(data->opt.url.ch_port) + 57 )> MAX_SIZE_URL)
@@ -609,10 +604,8 @@ int headers(
 	char *word2)
 {
 
-	char url[MAX_SIZE_URL];
+	char url[MAX_SIZE_URL] = {0, };
 	char *auth=NULL;
-
-	memset(url, 0, MAX_SIZE_URL);
 
 	if(data->opt.method != NULL && strlen(data->opt.method)< (MAX_SIZE_URL-2))
 	{
@@ -716,20 +709,20 @@ int basic_auth(
 	char *word1, 
 	char *word2)
 {
-	char url[MAX_SIZE_URL];
-	memset(url, 0, MAX_SIZE_URL);
+	char url[MAX_SIZE_URL] = {0, };
 	char *auth=NULL;
+	size_t ressource_length = 0;
 
 	if(data->opt.method != NULL && strlen(data->opt.method)< (MAX_SIZE_URL-2))
 	{
 		strncpy(url, data->opt.method, strlen(data->opt.method));
 		url[strlen(data->opt.method)]=' ';
-		url[strlen(data->opt.method)+1]='\0';
+		// url[strlen(data->opt.method)+1]='\0';
 	}
 	else
 	{
 		strncpy(url, "GET ", 4);
-		url[4]='\0';
+		// url[4]='\0';
 	}
 
 	add_proxy_header(data, url);
@@ -789,11 +782,12 @@ int basic_auth(
 
 	strncat(url,"\r\n", 2);
 
-	*ressource = calloc(strlen(url)+1,1);
+	ressource_length = strlen(url) + 1;
+	*ressource = calloc(ressource_length,1);
 	memset(*ressource, 0, sizeof(*ressource));
 	EXIT_IFNULL(*ressource, "Memory Error");
 
-	strncpy(*ressource, url, strlen(url));
+	strncpy(*ressource, url, ressource_length - 1);
 
 	return(1);
 }

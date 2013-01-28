@@ -57,9 +57,9 @@ void sock4cookie(t_options *opt)
 int catch_cookie(char **ressource , t_datathread *data)
 {
 
-	char url[MAX_SIZE_URL];
-	memset(url, 0, MAX_SIZE_URL);
+	char url[MAX_SIZE_URL] = {0, };
 	char *auth=NULL;
+	size_t ressource_length = -1;
 
 	strncpy(url, "GET ", 4);
 	url[4]='\0';
@@ -107,11 +107,12 @@ int catch_cookie(char **ressource , t_datathread *data)
 
 	strncat(url,"\r\n", 2);
 
-	*ressource = calloc(strlen(url)+1,1);
-	memset(*ressource, 0, sizeof(*ressource));
+	ressource_length = strlen(url) +1;
+	*ressource = calloc(ressource_length,1);
+	memset(*ressource, 0, ressource_length);
 	EXIT_IFNULL(*ressource, "Memory Error");
 
-	strncpy(*ressource, url, strlen(url));
+	strncpy(*ressource, url, ressource_length-1);
 	return(1);
 }
 

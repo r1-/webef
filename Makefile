@@ -1,7 +1,10 @@
 LDFLAGS= -lpthread -D_REENTRANT -lssl 
-CFLAGS= -g -Wall -D_GNU_SOURCE -I includes -I mods -z relro -z now
+CFLAGS= -g -Wall -D_GNU_SOURCE -I includes -I mods
 SRC=main.c options.c fuzz.c file.c send.c ssl.c http.c encodage.c mods/inject.c
 EXEC= webef
+ifeq ($(CC), gcc)
+CFLAGS+= -z relro -z now
+endif
 OBJS= $(SRC:.c=.o)
 
 #pour prendre tous les .c

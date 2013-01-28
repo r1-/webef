@@ -53,18 +53,39 @@ void the_end(t_options *opt, int error)
 
 	printf("                                                                                       \
 				 \n");
-	if(error !=0)
+	if(error)
 		printf("Error : %i\n", error);
 }
 
 int main(int argc, char** argv)
 {
 	t_options opt;
-	int ret;
+	int ret = -1;
+	/* hugsy style
+	time_t start_time, end_time;
+	unsigned long execution_time = -1;
+	
+	start_time = end_time = (time_t) -1 ;
+
+	start_time = time (NULL);
+	*/
+
+	memset(&opt, 0, sizeof(t_options));
 
 	get_options(argc, argv, &opt);
 	ret=fuzz(opt);	
 	
+	/*hugzy style
+	end_time= time(NULL);
+
+	if (start_time != (time_t) -1 && end_time != (time_t) -1 ) 
+	{
+		execution_time = end_time - start_time;
+		printf("\n");
+		printf("Execution time was : %ld sec\n", execution_time);
+	}
+	*/
+
 	the_end(&opt, ret);
 	return (0);
 }

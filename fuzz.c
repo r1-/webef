@@ -48,7 +48,7 @@ static long *lock_count;
 
 int fuzz(t_options options)
 {
-	int ret;
+	int ret =-1;
 
 	if(options.inj)
 		sock4cookie(&options);
