@@ -177,7 +177,6 @@ bool get_location(char *search, char *buf, int size)
           char *loc=NULL;
           unsigned length;
           unsigned int i=10;
-          bool resp;
 
           if(strlen(buf) < 10)
                     return false;
@@ -191,16 +190,14 @@ bool get_location(char *search, char *buf, int size)
           p=strstr(tmp+i, "\r\n");
           length = (unsigned int) ((unsigned long) p - ((unsigned long) (tmp+i)) +1);
 
-          loc= calloc(length+1,1);
+          loc= alloca(length+1);
           strncpy(loc, tmp+i, length);
 
           if(strstr(loc, search)!=NULL)
-                    resp=true;
-          else
-                    resp=false;
+                    return (true);
+	  
+	  return (false);
 
-          free(loc);
-          return resp;
 }
 
 bool end_chunck(char *buf, int size)
@@ -237,18 +234,15 @@ bool detect_header(char *buf, int size)
           return false;
 }
 
-int post(
-          char **ressource,
+int post( char **ressource,
           t_datathread *data,
           char *word1,
           char *word2)
 {
-          char url[MAX_SIZE_URL];
+          char url[MAX_SIZE_URL] = {0, };
           int size;
-          char length[4];
+          char length[4] = {0, };
           char *auth=NULL;
-
-          memset(url, 0, MAX_SIZE_URL);
 
           if(data->opt.method != NULL && strlen(data->opt.method)< (MAX_SIZE_URL-2) ) {
                     strncpy(url, data->opt.method, strlen(data->opt.method));
@@ -375,7 +369,9 @@ int post(
 
 void add_proxy_header(t_datathread *data, char url[])
 {
-          if( data->opt.url.ssl == 0 && data->opt.proxy.ip!= NULL && ((strlen(url) + strlen(data->opt.url.host) +8)< MAX_SIZE_URL)) {
+          if( data->opt.url.ssl == 0 && \
+	      data->opt.proxy.ip!= NULL && \
+	      ((strlen(url) + strlen(data->opt.url.host) +8) < MAX_SIZE_URL)) {
                     strcat(url, "http://");
                     strncat(url, data->opt.url.host, strlen(data->opt.url.host));
                     if(data->opt.url.port != 80 && ((strlen(url) + strlen(data->opt.url.ch_port)+2) < MAX_SIZE_URL)) {
@@ -385,21 +381,20 @@ void add_proxy_header(t_datathread *data, char url[])
           }
 }
 
-int get(
-          char **ressource,
-          t_datathread *data,
-          char **word1,
-          char **word2)
+int get(char **ressource,
+	t_datathread *data,
+	char **word1,
+	char **word2)
 {
-          char url[MAX_SIZE_URL];
-          memset(url, 0, MAX_SIZE_URL);
-          char *auth=NULL;
+          char url[MAX_SIZE_URL] = {0, };
+          char *auth = NULL;
           size_t ressource_length = 0;
 
           if(data->opt.method != NULL && strlen(data->opt.method)< (MAX_SIZE_URL-2)) {
                     strncpy(url, data->opt.method, strlen(data->opt.method));
                     url[strlen(data->opt.method)]=' ';
                     url[strlen(data->opt.method)+1]='\0';
+		    
           } else {
                     strncpy(url, "GET ", 4);
                     url[4]='\0';
@@ -495,6 +490,7 @@ int get(
 
           strncpy(*ressource, url, ressource_length - 1);
 
+	  
           return(1);
 }
 
@@ -504,7 +500,7 @@ char *basic_authent(char *user, char *pass)
           char *encod=NULL;
           unsigned int input_size=0;
 
-          plain=calloc(strlen(user)+strlen(pass)+2,1);
+          plain = alloca(strlen(user)+strlen(pass)+2);
           strcpy(plain, user);
           strcat(plain, ":");
           strcat(plain, pass);
@@ -516,14 +512,13 @@ char *basic_authent(char *user, char *pass)
 
 bool proxy_connect(char **ressource, t_datathread *data)
 {
-          char url[MAX_SIZE_URL];
-          memset(url, 0, MAX_SIZE_URL);
+          char url[MAX_SIZE_URL] = {0, };
 
           strcpy(url, "CONNECT ");
           if((strlen(data->opt.url.host) * 2+strlen(data->opt.url.ch_port) + 57 )> MAX_SIZE_URL)
                     return(false);
           strcat(url, data->opt.url.host);
-          strcat (url, ":");
+          strcat(url, ":");
           strcat(url, data->opt.url.ch_port);
           strcat(url, " HTTP/1.1\r\nProxy-Connection: keep-alive\r\nHost: ");
           strcat(url, data->opt.url.host);
@@ -573,19 +568,16 @@ bool checkhost(s_headers head, char *headers)
           return false;
 }
 
-int headers(
-          char **ressource,
-          t_datathread *data,
-          char *word1,
-          char *word2)
+int headers(char **ressource,
+	    t_datathread *data,
+	    char *word1,
+	    char *word2)
 {
 
-          char url[MAX_SIZE_URL];
+          char url[MAX_SIZE_URL] = {0, };
           char *auth=NULL;
 
-          memset(url, 0, MAX_SIZE_URL);
-
-          if(data->opt.method != NULL && strlen(data->opt.method)< (MAX_SIZE_URL-2)) {
+          if(data->opt.method != NULL && strlen(data->opt.method) < (MAX_SIZE_URL-2)) {
                     strncpy(url, data->opt.method, strlen(data->opt.method));
                     url[strlen(data->opt.method)]=' ';
                     url[strlen(data->opt.method)+1]='\0';
@@ -670,24 +662,23 @@ int headers(
           return(1);
 }
 
-int basic_auth(
-          char **ressource,
-          t_datathread *data,
-          char *word1,
-          char *word2)
+int basic_auth(char **ressource,
+	       t_datathread *data,
+	       char *word1,
+	       char *word2)
 {
-          char url[MAX_SIZE_URL];
-          memset(url, 0, MAX_SIZE_URL);
-          char *auth=NULL;
+          char url[MAX_SIZE_URL] = {0, };
+          char *auth = NULL;
           size_t ressource_length = 0;
 
           if(data->opt.method != NULL && strlen(data->opt.method)< (MAX_SIZE_URL-2)) {
                     strncpy(url, data->opt.method, strlen(data->opt.method));
                     url[strlen(data->opt.method)]=' ';
-                    url[strlen(data->opt.method)+1]='\0';
+                    /* url[strlen(data->opt.method)+1]='\0'; */
+		    
           } else {
                     strncpy(url, "GET ", 4);
-                    url[4]='\0';
+                    /* url[4]='\0'; */
           }
 
           add_proxy_header(data, url);

@@ -93,9 +93,9 @@ int parse_response(
                     }
           }
           if( (opt->size_down != -1) &&   // if -n is set
-                              ( (opt->size_down == size && opt->size_up == -1) ||  // AND if -n contain one single number
-                                (opt->size_down <= size && opt->size_up != -1 && opt->size_up >= size) // OR if -n contain range numbers
-                              )) {
+	      ( (opt->size_down == size && opt->size_up == -1) ||  // AND if -n contain one single number
+		(opt->size_down <= size && opt->size_up != -1 && opt->size_up >= size) // OR if -n contain range numbers
+	      )) {
                     if (opt->quiet) {
                               goto end_parse;
                     } else {
@@ -189,7 +189,8 @@ int sendfuzz(
                     //return -3 due to specific processing in mod
                     return(-3);
           } else {
-                    if(data->opt.auth.type==1 && (data->opt.auth.user==NULL || data->opt.auth.pass==NULL)) {
+                    if(data->opt.auth.type==TYPE_FUZZ_FILE && \
+		       (data->opt.auth.user==NULL || data->opt.auth.pass==NULL)) {
                               if(word2==NULL)
                                         prep=basic_auth(&(url), data, *word1, NULL);
                               else
@@ -256,8 +257,7 @@ int iosocket(
           SSL *ssl,
           unsigned int *content_length)
 {
-          char tmp_buf[MAX_SIZE_READ];
-          memset(tmp_buf, 0, MAX_SIZE_READ);
+          char tmp_buf[MAX_SIZE_READ] = {0, };
           size_t effective_length = 0;
           unsigned int size_read;
           int count=0;

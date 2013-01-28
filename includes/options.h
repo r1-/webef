@@ -53,6 +53,10 @@ typedef struct s_cookies {
 
 typedef s_cookies *t_cookies;
 
+
+#define TYPE_FUZZ_FILE 1
+#define TYPE_FUZZ_RANGE 2
+
 typedef struct s_options {
           unsigned int type_fuzz; /* 1=file 2=range 3 ... */
           unsigned int thread;

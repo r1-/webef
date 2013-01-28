@@ -16,6 +16,9 @@ $(EXEC): $(OBJS)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lcrypto
 #	rm -f $(OBJS)
 
+clang: $(OBJS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $(EXEC)-$@ $^ -lcrypto
+
 %.o: %.c
 	$(CC) $(CFLAGS) -o $@ -c $<
 

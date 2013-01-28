@@ -112,6 +112,7 @@ void init_options(t_options *opt)
           opt->agressive=false;
 }
 
+
 void get_options(int argc, char **argv, t_options *opt)
 {
           int c;
@@ -123,15 +124,15 @@ void get_options(int argc, char **argv, t_options *opt)
           while( (c = getopt(argc,argv,"f:r:t:n:s:H:B:m:p:P:E:e:c:k:R:qhviAd23")) != -1 ) {
                     switch ( c ) {
                     case 'f' :
-                              if(opt->type_fuzz == 1)
+                              if(opt->type_fuzz == TYPE_FUZZ_FILE)
                                         add_file(optarg, opt, 2);
                               else {
-                                        opt->type_fuzz=1;
+                                        opt->type_fuzz=TYPE_FUZZ_FILE;
                                         add_file(optarg, opt, 1);
                               }
                               break;
                     case 'r' :
-                              opt->type_fuzz=2;
+                              opt->type_fuzz = TYPE_FUZZ_RANGE;
                               break;
                     case 't' :
                               opt->thread = atoi(optarg);
@@ -509,7 +510,7 @@ int parse_url(char* url, t_options *url_parsed)
           p=strstr(url_parsed->url.url_mid, "FUZ2Z");
 
           if(p) {
-                    EXIT_IFNULL(url_parsed->file2, "FUZ2Z defined without 2nde source FUZZ (range or file)");
+                    EXIT_IFNULL(url_parsed->file2, "FUZ2Z defined without 2nd source FUZZ (range or file)");
 
                     *p=0;
                     url_parsed->twofuzz=true;

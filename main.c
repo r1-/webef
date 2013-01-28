@@ -33,6 +33,7 @@
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 #include <openssl/conf.h>
+#include <time.h>
 
 #include "options.h"
 #include "fuzz.h"
@@ -53,18 +54,30 @@ void the_end(t_options *opt, int error)
 
           printf("                                                                                       \
 				 \n");
-          if(error !=0)
+          if(error)
                     printf("Error : %i\n", error);
 }
 
 int main(int argc, char** argv)
 {
           t_options opt;
-          int ret;
+          int ret = -1;
+	  time_t start_time, end_time;
+	  unsigned long execution_time = -1;
 
+	  memset(&opt, 0, sizeof(t_options));
+	  start_time = end_time = (time_t) -1;
+	  
           get_options(argc, argv, &opt);
+	  start_time = time(NULL);
           ret=fuzz(opt);
+	  end_time = time(NULL);
 
+	  if (start_time != (time_t) -1 && end_time != (time_t) -1 ) {
+		    execution_time = end_time - start_time;
+		    printf("Execution time was : %ld sec\n", execution_time);
+	  }
+	  
           the_end(&opt, ret);
           return (0);
 }
