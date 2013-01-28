@@ -265,15 +265,19 @@ void get_options(int argc, char **argv, t_options *opt)
           }
 
           if(opt->proxy.ip != NULL)
-                    opt->dns_host = gethostbyname(opt->proxy.ip);
+                    /* opt->dns_host = gethostbyname(opt->proxy.ip); */
+		    opt->dns_host = opt->proxy.ip;
           else
-                    opt->dns_host = gethostbyname(opt->url.host);
+                    /* opt->dns_host = gethostbyname(opt->url.host); */
+		    opt->dns_host = opt->url.host;
 
           if(opt->dns_host==NULL && h_errno == TRY_AGAIN) {
                     if(opt->proxy.ip != NULL)
-                              opt->dns_host = gethostbyname(opt->proxy.ip);
+                              /* opt->dns_host = gethostbyname(opt->proxy.ip); */
+			      opt->dns_host = opt->proxy.ip;
                     else
-                              opt->dns_host = gethostbyname(opt->url.host);
+                              /* opt->dns_host = gethostbyname(opt->url.host); */
+			      opt->dns_host = opt->url.host;
 
                     EXIT_IFNULL(opt->dns_host, "DNS error");
           } else
@@ -314,6 +318,8 @@ void parse_proxy(char *prox, t_options *opt)
                     *p=0;
                     opt->proxy.ip=prox;
                     opt->proxy.port=atoi(p+1);
+		    snprintf(opt->proxy.ch_port, 5, "%hu", opt->proxy.port);
+		    
           } else {
                     opt->proxy.ip=prox;
                     opt->proxy.ip=NULL;

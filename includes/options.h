@@ -33,6 +33,7 @@
 
 #include <sys/types.h>
 #include <openssl/ssl.h>
+#include <arpa/inet.h>
 
 #ifndef    __bool_true_false_are_defined
 #   define   bool   int
@@ -71,7 +72,9 @@ typedef struct s_options {
                     char ch_port[6];
           } url;
 
-          struct hostent *dns_host;
+          /* struct hostent *dns_host; */
+		    char *dns_host;
+		    char ip_host[INET6_ADDRSTRLEN+1];
 
           char *file1;
           unsigned int line_file1;
@@ -117,6 +120,7 @@ typedef struct s_options {
           struct {
                     char *ip;
                     unsigned short port;
+			      char ch_port[6]; 
           } proxy;
 
           char *headers;

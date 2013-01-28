@@ -75,6 +75,7 @@ int main(int argc, char** argv)
 
 	  if (start_time != (time_t) -1 && end_time != (time_t) -1 ) {
 		    execution_time = end_time - start_time;
+		    printf("\n");
 		    printf("Execution time was : %ld sec\n", execution_time);
 	  }
 	  
