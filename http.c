@@ -404,7 +404,7 @@ int get(
 {
 	char url[MAX_SIZE_URL] = { 0, };
 	char *auth=NULL;
-	size_t ressource_length = 0; // added by hugsy ??
+	size_t ressource_length = 0; 
 
 	if(data->opt.method != NULL && strlen(data->opt.method)< (MAX_SIZE_URL-2))
 	{
@@ -511,7 +511,7 @@ int get(
 
 	strncat(url,"\r\n", 2);
 
-	ressource_length = strlen(url + 1);
+	ressource_length = strlen(url) + 1;
 	*ressource = calloc(ressource_length, 1);
 	memset(*ressource, 0, ressource_length);
 	EXIT_IFNULL(*ressource, "Memory Error");

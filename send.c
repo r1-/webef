@@ -80,18 +80,29 @@ int parse_response(
 	pthread_mutex_lock(&mutex_print);
 
 		if(opt->location !=NULL && get_location(opt->location, buf, strlen(buf)))
+		{
+			if (opt->quiet)
+				goto end_parse;
 			display=false;
-		
+		}
 		if(strstr(opt->hide, resp->code))
+		{
+			if(opt->quiet)
+				goto end_parse;
 			display=false;
+		}
 
-		if( (opt->size_down != -1) &&   // if -n is set
+		if((opt->size_down != -1) &&   // if -n is set
 			 ( (opt->size_down == size && opt->size_up == -1) ||  // AND if -n contain one single number 
 				(opt->size_down <= size && opt->size_up != -1 && opt->size_up >= size) // OR if -n contain range numbers
 			 ))
-					display=false;
+		{
+			if(opt->quiet)
+				goto end_parse;
+			display=false;
+		}
 
-		opt->count++;
+		 //opt->count++;
 
 		if(display)
 		{
@@ -112,11 +123,14 @@ int parse_response(
 				printf("/%s", w2);
 			printf("\n");
 		}
-		else
+		else if(!opt->quiet)
 		{
 			fprintf(stderr,"*%4ld ", opt->count);
 			fprintf(stderr,"\r");
 		}
+
+end_parse:
+	opt->count++;
 	pthread_mutex_unlock(&mutex_print);
 
 	return (error);
